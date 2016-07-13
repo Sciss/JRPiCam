@@ -2,6 +2,7 @@ package com.hopding.jrpicam.enums;
 
 /**
  * AWB setting options.
+ * <ul>
  * <li>{@link #OFF}</li>
  * <li>{@link #AUTO}</li>
  * <li>{@link #SUN}</li>
@@ -12,7 +13,8 @@ package com.hopding.jrpicam.enums;
  * <li>{@link #INCANDESCENT}</li>
  * <li>{@link #FLASH}</li>
  * <li>{@link #HORIZON}</li>
- * 
+ * </ul>
+ *
  * @author Andrew Dillon
  */
 public enum AWB {
