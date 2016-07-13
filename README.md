@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/Sciss/JRPiCam.svg?branch=master)](https://travis-ci.org/Sciss/JRPiCam)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.sciss/jrpicam/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.sciss/jrpicam)
+
+__N.B.:__ This is a 'shallow' fork that adds sbt build so I can publish a stable artifact to Maven Central (click badge above for artifact details). Below is the 'readme' by the original author, Andrew Dillon.
+
 # JRPiCam
 JRPiCam is a Java API that allows Java applications running on a Raspberry Pi to access the Raspberry Pi Camera. JRPiCam
 achieves this functionality by using the ProcessBuilder class to run the native raspistill program on the RPi. This means that 
