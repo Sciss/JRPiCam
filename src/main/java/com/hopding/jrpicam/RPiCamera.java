@@ -919,9 +919,22 @@ public class RPiCamera {
 			speed = 0;
 		options.put("shutter", new String[] { "-ss", "" + speed });
 	}
-	
-	//MAKE METHOD FOR AWBGAINS DISPLAY?
-	
+
+    /**
+     * Sets the gain levels for the red and blue channel (relative to green channel)
+     * when automatic white balance is turned off. This method
+	 * thus also calls `setAWB(AWB.OFF)`.
+     *
+     * @param red   relative red gain factor
+     * @param blue  relative blue gain factor
+     */
+	public void setAWBGains(double red, double blue) {
+	    if (red  < 0.0) red  = 0.0;
+        if (blue < 0.0) blue = 0.0;
+        options.put("awbgains", new String[] { "-awbg", "" + red + "," + blue });
+        setAWB(AWB.OFF);
+    }
+
 	/**
 	 * Sets the Dynamic Range Compression of image. DRC changes the images by 
 	 * increasing the range of dark areas of the image, and decreasing the 
