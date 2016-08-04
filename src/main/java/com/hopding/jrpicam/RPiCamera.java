@@ -1,24 +1,14 @@
 package com.hopding.jrpicam;
 
+import com.hopding.jrpicam.enums.*;
+import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-
-import com.hopding.jrpicam.enums.AWB;
-import com.hopding.jrpicam.enums.DRC;
-import com.hopding.jrpicam.enums.Encoding;
-import com.hopding.jrpicam.enums.Exposure;
-import com.hopding.jrpicam.enums.ImageEffect;
-import com.hopding.jrpicam.enums.MeteringMode;
-import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
+import java.util.*;
 
 /**
  * RPiCamera is used to access the Raspberry Pi Camera and take still photos.
@@ -51,15 +41,14 @@ import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
  */
 public class RPiCamera {
 	
-	String						prevCommand;
-	String						saveDir;
-	HashMap<String, String[]>	options	= new HashMap<String, String[]>();
-	ProcessBuilder				pb;
-	Process						p;
+	private String				        prevCommand;
+	private String				        saveDir;
+	private HashMap<String, String[]>	options	= new HashMap<String, String[]>();
+	private ProcessBuilder				pb;
+	private Process						p;
 								
 	/**
 	 * Sets RPiCamera's save directory to "/home/pi/Pictures".
-	 * @throws FailedToRunRaspistillException 
 	 */
 	public RPiCamera() throws FailedToRunRaspistillException {
 		this("/home/pi/Pictures");
@@ -69,7 +58,6 @@ public class RPiCamera {
 	 * Sets RPiCamera's save directory.
 	 * 
 	 * @param saveDir A String specifying the directory for RPiCamera to save images.
-	 * @throws FailedToRunRaspistillException 
 	 */
 	public RPiCamera(String saveDir) throws FailedToRunRaspistillException {
 		this.saveDir = saveDir;
@@ -113,8 +101,6 @@ public class RPiCamera {
 	 * @param width An int specifying the width of the image to take.
 	 * @param height An int specifying the height of the image to take.
 	 * @return A File object representing the full path the picture was saved to.
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public File takeStill(String pictureName, int width, int height) throws IOException, InterruptedException {
 		List<String> command = new ArrayList<String>();
@@ -126,10 +112,8 @@ public class RPiCamera {
 		command.add("-h");
 		command.add("" + height);
 		for (Map.Entry<String, String[]> entry : options.entrySet()) {
-			if (entry.getValue() != null && entry.getKey() != "width" && entry.getKey() != "height") {
-				for (String s : entry.getValue()) {
-					command.add(s);
-				}
+			if (entry.getValue() != null && !entry.getKey().equals("width") && !entry.getKey().equals("height")) {
+                Collections.addAll(command, entry.getValue());
 			}
 		}
 		prevCommand = command.toString();
@@ -166,8 +150,6 @@ public class RPiCamera {
 	 * 
 	 * @param pictureName A String containing the name to save picture under.
 	 * @return A File object representing the full path the picture was saved to.
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public File takeStill(String pictureName) throws IOException, InterruptedException {
 		return takeStill(pictureName,
@@ -196,8 +178,6 @@ public class RPiCamera {
 	 * @param width An int specifying width of image to take.
 	 * @param height An int specifying height of image to take.
 	 * @return A BufferedImage containing the image.
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public BufferedImage takeBufferedStill(int width, int height) throws IOException, InterruptedException {
 		List<String> command = new ArrayList<String>();
@@ -209,10 +189,8 @@ public class RPiCamera {
 		command.add("-h");
 		command.add("" + height);
 		for (Map.Entry<String, String[]> entry : options.entrySet()) {
-			if (entry.getValue() != null && entry.getKey() != "width" && entry.getKey() != "height") {
-				for (String s : entry.getValue()) {
-					command.add(s);
-				}
+			if (entry.getValue() != null && !entry.getKey().equals("width") && !entry.getKey().equals("height")) {
+                Collections.addAll(command, entry.getValue());
 			}
 		}
 		prevCommand = command.toString();
@@ -237,6 +215,7 @@ public class RPiCamera {
 //		ImageReadParam param = reader.getDefaultReadParam();
 //		BufferedImage bi = reader.read(0, param);
 //		--------------------------------------------------------------------------
+        p.getInputStream().close();
 		return bi;
 	}
 	
@@ -258,8 +237,6 @@ public class RPiCamera {
 	 }
 	 * </pre>
 	 * @return A BufferedImage containing the image.
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public BufferedImage takeBufferedStill() throws IOException, InterruptedException {
 		return takeBufferedStill(
@@ -314,7 +291,6 @@ public class RPiCamera {
 	 * @param height An int specifying the height of the image to take (ideally a multiple of 16).
 	 * @param keepPadding A boolean indicating whether or not to preserve the padding on an image.
 	 * @return An int array containing the image's RGB values.
-	 * @throws IOException
 	 */
 	public int[] takeStillAsRGB(int width, int height, boolean keepPadding) throws IOException {
 		List<String> command = new ArrayList<String>();
@@ -327,10 +303,8 @@ public class RPiCamera {
 		command.add("-h");
 		command.add("" + height);
 		for (Map.Entry<String, String[]> entry : options.entrySet()) {
-			if (entry.getValue() != null && entry.getKey() != "width" && entry.getKey() != "height") {
-				for (String s : entry.getValue()) {
-					command.add(s);
-				}
+			if (entry.getValue() != null && !entry.getKey().equals("width") && !entry.getKey().equals("height")) {
+                Collections.addAll(command, entry.getValue());
 			}
 		}
 		prevCommand = command.toString();
@@ -443,7 +417,6 @@ public class RPiCamera {
 	 * 
 	 * @param keepPadding A boolean indicating whether or not to preserve the padding on an image.
 	 * @return An int array containing the image's RGB values.
-	 * @throws IOException
 	 */
 	public int[] takeStillAsRGB(boolean keepPadding) throws IOException {
 		return takeStillAsRGB(
@@ -453,16 +426,16 @@ public class RPiCamera {
 	}
 	
 	/**
-	 * Take a series of timelapsed photos for the specified time frame and save them under the 
-	 * specified filename to the RPiCamera's save directory. Length of time to timelapse for may 
+	 * Takes a series of time-lapsed photos for the specified time frame and save them under the
+	 * specified filename to the RPiCamera's save directory. Length of time to time-lapse for may
 	 * be specified with the setTimeout() method.<br>
 	 * <br>
-	 * THIS METHOD WILL BLOCK THE THREAD UNTIL THE TIMELAPSE IS COMPLETE IF boolean wait ARGUMENT 
+	 * THIS METHOD WILL BLOCK THE THREAD UNTIL THE TIME-LAPSE IS COMPLETE IF boolean wait ARGUMENT
 	 * IS SET TO true.<br>
 	 * <br>
 	 * Most recent image in the series may be appended to the file specified in the 
 	 * setLinkLatestImage() method. If this property is set, timelapse() will return a File
-	 * object representing the full path to the file the timelapsed photos are being linked to.
+	 * object representing the full path to the file the time-lapsed photos are being linked to.
 	 * Otherwise, timelapse() will return null.<br>
 	 * <br>
 	 * When passing in a String for the photo's name, it is important to include "%04d" in the name.
@@ -477,26 +450,24 @@ public class RPiCamera {
 	 * RPiCamera piCamera = new RPiCamera();
 	 * //Change encoding from JPEG to PNG
 	 * piCamera.setEncoding(Encoding.PNG);
-	 * //Set period for timelapse to run at 10 seconds
+	 * //Set period for time-lapse to run at 10 seconds
 	 * piCamera.setTimeout(10000); //10,000 milliseconds == 10 seconds
 	 * //Set RPiCamera to link images to "linkFile.png"
 	 * piCamera.setLinkLatestImage(true, "/home/pi/Pictures/linkfile.png");
-	 * //Begin timelapse
+	 * //Begin time-lapse
 	 * piCamera.timelapse(
-	 * 	true, //Block thread until timelapse is completed
+	 * 	true, //Block thread until time-lapse is completed
 	 * 	"%04dTimelapsePics.png", //Save images under this name, with frame count added to beginning
 	 * 	1000 //Wait 1 second between capturing each image
 	 * );
 	 * }
 	 * </pre>
 	 * 
-	 * @param wait A boolean indicating whether to block the thread until timelapse is complete or not.
+	 * @param wait A boolean indicating whether to block the thread until time-lapse is complete or not.
 	 * @param pictureName A String containing name for each captured image.
 	 * @param time Period of time in milliseconds to wait between taking each image.
 	 * @return If the link latest image property is set, the File images are being linked to, 
 	 * 		   otherwise returns null.
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public File timelapse(boolean wait, String pictureName, int time) throws IOException, InterruptedException {
 		if (!pictureName.contains("%04d"))
@@ -510,9 +481,7 @@ public class RPiCamera {
 		command.add(saveDir + File.separator + pictureName);
 		for (Map.Entry<String, String[]> entry : options.entrySet()) {
 			if (entry.getValue() != null) {
-				for (String s : entry.getValue()) {
-					command.add(s);
-				}
+                Collections.addAll(command, entry.getValue());
 			}
 		}
 		prevCommand = command.toString();
@@ -646,18 +615,18 @@ public class RPiCamera {
 	 * @param h An int specifying height of preview window.
 	 */
 	public void turnOnPreview(int x, int y, int w, int h) {
-		options.put("preview", new String[] { "-p", "" + x, ",", "" + y, ",", "" + w, ",", "" + h });
+		options.put("preview", new String[] { "-p", "" + x + "," + y + "," + w + "," + h });
 	}
 	
 	/**
-	 * Turn fullscreen preview on or off.
+	 * Turns fullscreen preview on or off.
 	 * 
 	 * @param fullscreen turn on/off fullscreen.
 	 */
 	public void setPreviewFullscreen(boolean fullscreen) {
 		if (fullscreen) {
 			options.put("fullscreen", new String[] { "-f" });
-		} else if (!fullscreen) {
+		} else {
 			options.put("fullscreen", null);
 		}
 	}
@@ -729,7 +698,7 @@ public class RPiCamera {
 	}
 	
 	/**
-	 * Sets colour saturation of image (-100 to 100), default is 0. Saturation values lower
+	 * Sets color saturation of image (-100 to 100), default is 0. Saturation values lower
 	 * than -100 will set saturation to -100, values greater than 100 will set saturation to
 	 * 100.
 	 * 
@@ -798,12 +767,9 @@ public class RPiCamera {
 	}
 	
 	/**
-	 * Sets colour effect of RPiCamera. The specified U and V parameters (0 to 255) 
+	 * Sets color effect of RPiCamera. The specified U and V parameters (0 to 255)
 	 * are applied to the U and Y channels of the image. 
 	 * For example, setColourEffect(128, 128) should result in a monochrome image.
-	 * 
-	 * @param U
-	 * @param V
 	 */
 	public void setColourEffect(int U, int V) {
 		if (U > 255)
@@ -830,8 +796,6 @@ public class RPiCamera {
 	 * Sets the rotation of the image in viewfinder and resulting image. This 
 	 * can take any value from 0 upwards, but due to hardware constraints only 
 	 * 0, 90, 180 and 270 degree rotations are supported.
-	 * 
-	 * @param rotation
 	 */
 	public void setRotation(int rotation) {
 		if (rotation > 359)
@@ -878,11 +842,6 @@ public class RPiCamera {
 	 * set a ROI at half way across and down the sensor, and a width and height of a 
 	 * quarter of the sensor use :<br>
 	 * setRegionOfInterest(0.5, 0.5, 0.25, 0.25)
-	 * 
-	 * @param x
-	 * @param y
-	 * @param w
-	 * @param d
 	 */
 	public void setRegionOfInterest(double x, double y, double w, double d) {
 		if (x > 1.0)
@@ -905,12 +864,10 @@ public class RPiCamera {
 	}
 	
 	/**
-	 * Set the shutter speed to the specified value (in microseconds). There 
+	 * Sets the shutter speed to the specified value (in microseconds). There
 	 * is currently an upper limit of approximately 6000000us (6000ms, 6s). 
 	 * Shutter speed values passed in that are greater than 6000000 will be
 	 * regarded as 6000000.
-	 * 
-	 * @param speed
 	 */
 	public void setShutter(int speed) {
 		if (speed > 6000000)
@@ -1005,7 +962,7 @@ public class RPiCamera {
 	public void setAddRawBayer(boolean add) {
 		if (add) {
 			options.put("raw", new String[] { "-r" });
-		} else if (!add) {
+		} else {
 			options.put("raw", null);
 		}
 	}
@@ -1022,7 +979,7 @@ public class RPiCamera {
 	public void setLinkLatestImage(boolean link, String fileName) {
 		if (link) {
 			options.put("latest", new String[] { "-l", "" + fileName });
-		} else if (!link) {
+		} else {
 			options.put("latest", null);
 		}
 	}
@@ -1042,10 +999,6 @@ public class RPiCamera {
 	/**
 	 * Allows specification of the thumbnail image inserted in to the image file. 
 	 * If not specified, defaults are a size of 64x48 at quality 35.
-	 * 
-	 * @param x
-	 * @param y
-	 * @param quality
 	 */
 	public void setThumbnailParams(int x, int y, int quality) {
 		options.put("thumb", new String[] { "-th", "" + x, ":", "" + y, ":", "" + quality });
@@ -1086,8 +1039,6 @@ public class RPiCamera {
 	 * Selects which camera to use (on a multicamera system). 0 or 1. Default is 0.
 	 * Values lower than 0 will select camera 0, values higher than 1 will select
 	 * camera 1.
-	 * 
-	 * @param camNumber
 	 */
 	public void selectCamera(int camNumber) {
 		if (camNumber < 0)
@@ -1113,7 +1064,7 @@ public class RPiCamera {
 		options.put("burst", null);
 	}
 	
-	//ADD A METHOD SUPPORTING THE --mode OPTION, WILL NEED AN ENUM PROBLY
+	//ADD A METHOD SUPPORTING THE --mode OPTION, WILL NEED AN ENUM PROBABLY
 	
 	public void setDateTimeOn() {
 		options.put("datetime", new String[] { "-dt" });
